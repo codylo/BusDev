@@ -10,44 +10,83 @@ import time
 from datetime import *
 
 BASE_URL = "rt.data.gov.hk"
+BASE_URL_KMB = "data.etabus.gov.hk"
+
 # folder_prefix = "bus_data"
 folder_prefix = "/home/bus_data"
 
+
+
 def get_all_routes(company):
-    conn = http.client.HTTPSConnection(BASE_URL)
-    conn.request("GET", f"/v1/transport/citybus-nwfb/route/{company}")
-    all_routes_file_name = f'{folder_prefix}/{company}_all_routes.json'
-    all_routes_list = {}
 
-    try:
-        with open(all_routes_file_name, encoding="utf-8") as json_file:
-            all_routes_list = json.load(json_file)
-            # all_routes_list_date = datetime.strptime(all_routes_list["generated_timestamp "], '%Y-%m-%dT%H:%M:%S%z').replace(tzinfo=None)
-            all_routes_list_date = datetime.strptime(all_routes_list["generated_timestamp "], '%Y-%m-%dT%H:%M:%S+08:00').replace(tzinfo=None)
-            if (datetime.now() - all_routes_list_date).days > 7:
-                with open(all_routes_file_name, "w", encoding="utf-8") as json_file:
-                    json.dump(json.loads(conn.getresponse().read().decode("utf-8")), json_file, ensure_ascii=False, indent=4)
+    # company = str(company).upper()
+    
+    if company == "ctb" or company == "nwfb":
+        conn = http.client.HTTPSConnection(BASE_URL)
+        conn.request("GET", f"/v1/transport/citybus-nwfb/route/{company}")
+        all_routes_file_name = f'{folder_prefix}/{company}_all_routes.json'
+        all_routes_list = {}
+        try:
+            with open(all_routes_file_name, encoding="utf-8") as json_file:
+                all_routes_list = json.load(json_file)
+                # all_routes_list_date = datetime.strptime(all_routes_list["generated_timestamp "], '%Y-%m-%dT%H:%M:%S%z').replace(tzinfo=None)
+                all_routes_list_date = datetime.strptime(all_routes_list["generated_timestamp "], '%Y-%m-%dT%H:%M:%S+08:00').replace(tzinfo=None)
+                if (datetime.now() - all_routes_list_date).days > 7:
+                    with open(all_routes_file_name, "w", encoding="utf-8") as json_file:
+                        json.dump(json.loads(conn.getresponse().read().decode("utf-8")), json_file, ensure_ascii=False, indent=4)
 
-    except JSONDecodeError:
-        all_routes_list = json.loads(conn.getresponse().read().decode("utf-8"))
-        with open(all_routes_file_name, "w",encoding="utf-8") as json_file:
-            json.dump(all_routes_list, json_file, ensure_ascii=False, indent=4)
+        except JSONDecodeError:
+            all_routes_list = json.loads(conn.getresponse().read().decode("utf-8"))
+            with open(all_routes_file_name, "w",encoding="utf-8") as json_file:
+                json.dump(all_routes_list, json_file, ensure_ascii=False, indent=4)
 
-    except FileNotFoundError:
-        if not os.path.exists(folder_prefix):
-            print(f"Folder {folder_prefix} not exist, creating.")
-            os.makedirs(folder_prefix)
-        all_routes_list = json.loads(conn.getresponse().read().decode("utf-8"))
-        with open(all_routes_file_name, "w", encoding="utf-8") as json_file:
-            json.dump(all_routes_list, json_file, ensure_ascii=False, indent=4)
+        except FileNotFoundError:
+            if not os.path.exists(folder_prefix):
+                print(f"Folder {folder_prefix} not exist, creating.")
+                os.makedirs(folder_prefix)
+            all_routes_list = json.loads(conn.getresponse().read().decode("utf-8"))
+            with open(all_routes_file_name, "w", encoding="utf-8") as json_file:
+                json.dump(all_routes_list, json_file, ensure_ascii=False, indent=4)
+    elif company == "kmb":
+        conn = http.client.HTTPSConnection(BASE_URL_KMB)
+        conn.request("GET", "/v1/transport/kmb/route/")
+        all_routes_file_name = f'{folder_prefix}/{company}_all_routes.json'
+        all_routes_list = {}
 
-    return {"routes" : [{"co" : route["co"],"route" : route["route"], "orig_tc" : route["orig_tc"], "dest_tc" : route["dest_tc"]} for route in all_routes_list["data"]]}
+        try:
+            with open(all_routes_file_name, encoding="utf-8") as json_file:
+                all_routes_list = json.load(json_file)
+                # all_routes_list_date = datetime.strptime(all_routes_list["generated_timestamp "], '%Y-%m-%dT%H:%M:%S%z').replace(tzinfo=None)
+                all_routes_list_date = datetime.strptime(all_routes_list["generated_timestamp"], '%Y-%m-%dT%H:%M:%S+08:00').replace(tzinfo=None)
+                if (datetime.now() - all_routes_list_date).days > 7:
+                    with open(all_routes_file_name, "w", encoding="utf-8") as json_file:
+                        json.dump(json.loads(conn.getresponse().read().decode("utf-8")), json_file, ensure_ascii=False, indent=4)
+
+        except JSONDecodeError:
+            all_routes_list = json.loads(conn.getresponse().read().decode("utf-8"))
+            with open(all_routes_file_name, "w",encoding="utf-8") as json_file:
+                json.dump(all_routes_list, json_file, ensure_ascii=False, indent=4)
+
+        except FileNotFoundError:
+            if not os.path.exists(folder_prefix):
+                print(f"Folder {folder_prefix} not exist, creating.")
+                os.makedirs(folder_prefix)
+            all_routes_list = json.loads(conn.getresponse().read().decode("utf-8"))
+            with open(all_routes_file_name, "w", encoding="utf-8") as json_file:
+                json.dump(all_routes_list, json_file, ensure_ascii=False, indent=4)
+
+    if company == "ctb" or company == "nwfb":
+        return {"routes" : [{"co" : route["co"],"route" : route["route"], "orig_tc" : route["orig_tc"], "dest_tc" : route["dest_tc"]} for route in all_routes_list["data"]]}
+    elif company == "kmb":
+        return {"routes" : [{"co" : company,"route" : route["route"], "orig_tc" : route["orig_tc"], "dest_tc" : route["dest_tc"]} for route in all_routes_list["data"]]}
+
 
 def get_all_company_routes():
     ctb_routes = get_all_routes("ctb")
     nwfb_routes = get_all_routes("nwfb")
+    kmb_routes = get_all_routes("kmb")
 
-    all_routes = { "ctb" : ctb_routes["routes"], "nwfb" : nwfb_routes["routes"]}
+    all_routes = {  "ctb" : ctb_routes["routes"], "nwfb" : nwfb_routes["routes"], "kmb" : kmb_routes["routes"]}
     return all_routes
     # for routes in [all_routes]:
     #     for route in routes:
@@ -83,7 +122,17 @@ class bus_main:
     def __init__(self, company, route, direction):
 
         # import datetime
-        self.BASE_URL = "rt.data.gov.hk"
+        self.BASE_URL = ""
+        if company == "ctb" or company == "nwfb":
+            self.BASE_URL = "rt.data.gov.hk"
+            self.URL_COMPANY = "citybus-nwfb"
+            self.URL_APPEND = ""
+            self.URL_COMPANY2 = company
+        else:
+            self.BASE_URL = "data.etabus.gov.hk"
+            self.URL_COMPANY = "kmb"
+            self.URL_APPEND = "1"
+            self.URL_COMPANY2 = ""
         self.conn = http.client.HTTPSConnection(self.BASE_URL)
         self.eta = {}
         self.updatetime = datetime.now()
@@ -119,7 +168,7 @@ class bus_main:
     def get_eta(self, bus_stop):
 
         self.updatetime = datetime.now()
-        self.conn.request("GET", f"/v1/transport/citybus-nwfb/eta/{self.company}/{self.bus_stop_list[bus_stop-1]['bus_stop_code']}/{self.route}")
+        self.conn.request("GET", f"/v1/transport/{self.URL_COMPANY}/eta/{self.URL_COMPANY2}/{self.bus_stop_list[bus_stop-1]['bus_stop_code']}/{self.route}/{self.URL_APPEND}")
         eta_data = json.loads(self.conn.getresponse().read().decode("utf-8"))
         
         if int(self.updatetime.hour) > 18:
@@ -167,27 +216,15 @@ class bus_main:
         import time
 
         def get_stop_list():
-            self.conn.request("GET", f"/v1/transport/citybus-nwfb/route-stop/{self.company}/{self.route}/{self.direction}")
+            self.conn.request("GET", f"/v1/transport/{self.URL_COMPANY}/route-stop/{self.URL_COMPANY2}/{self.route}/{self.direction}/{self.URL_APPEND}")
             bus_stop_data = json.loads(self.conn.getresponse().read().decode("utf-8"))
-            # print(bus_stop_data)
 
-            # Create a bus stop code list from the bus_stop_data dictionary 
-            # if bus_stop_data["data"] == "[]":
-            #     self.bus_stop_list.append(
-            #         {
-            #         "bus_stop_index" : 1,
-            #         "bus_stop_code" : 999999 , 
-            #         "bus_stop_name_tc" : "沒有此線路",
-            #         "bus_stop_lat" : 0.0,
-            #         "bus_stop_long" : 0.0,
-            #         })
-            # else:
             for i in (bus_stop_data["data"]):
                 self.bus_stop_code_list.append(i["stop"])
 
             for i in range (0, len(self.bus_stop_code_list)):
                 bus_stop_code = self.bus_stop_code_list[i]
-                self.conn.request("GET", f"//v1/transport/citybus-nwfb/stop/{bus_stop_code}")
+                self.conn.request("GET", f"//v1/transport/{self.URL_COMPANY}/stop/{bus_stop_code}")
                 stop = json.loads(self.conn.getresponse().read().decode("utf-8"))
                 self.bus_stop_list.append(
                 {

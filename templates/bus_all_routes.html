@@ -153,6 +153,15 @@
         <td>{{route["co"]}}</td>
       </tr>
       {% endfor %}
+      {% for route in all_company_routes["kmb"]: %}
+      <tr>
+        <th scope="row"><button type="button" class="btn btn-primary btn-sm btn-block"><a class="text-white"
+              href="./{{route['co']}}/{{route['route']}}/">{{route["route"]}}</a></button> </th>
+        <td>{{route["orig_tc"]}}</td>
+        <td>{{route["dest_tc"]}}</td>
+        <td>{{route["co"]}}</td>
+      </tr>
+      {% endfor %}
     </tbody>
   </table>
 
