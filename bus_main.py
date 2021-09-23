@@ -12,8 +12,8 @@ from datetime import *
 BASE_URL = "rt.data.gov.hk"
 BASE_URL_KMB = "data.etabus.gov.hk"
 
-# folder_prefix = "bus_data"
-folder_prefix = "/home/bus_data"
+folder_prefix = "bus_data"
+# folder_prefix = "/home/bus_data"
 
 
 
@@ -128,11 +128,16 @@ class bus_main:
             self.URL_COMPANY = "citybus-nwfb"
             self.URL_APPEND = ""
             self.URL_COMPANY2 = company
+            if company == "ctb":
+                self.company_tc = "城巴"
+            elif company == "nwfb":
+                self.company_tc = "新巴"
         else:
             self.BASE_URL = "data.etabus.gov.hk"
             self.URL_COMPANY = "kmb"
             self.URL_APPEND = "1"
             self.URL_COMPANY2 = ""
+            self.company_tc = "九巴"
         self.conn = http.client.HTTPSConnection(self.BASE_URL)
         self.eta = {}
         self.updatetime = datetime.now()
