@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <title>Route detail</title>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="/bus/">路線 {{route}} 到站時間</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="../../">Home <span class="sr-only">(current)</span></a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+
+
+  <div class="container-fluid">
+    <table class="table table-bordered table-striped">
+      <tr>
+        <th valign="top">
+          <table id="myTable" class="table table-striped table-hover table-bordered results">
+            <thead class="thead-dark">
+              {% if route_inbound|length != 0 %}
+              <tr>
+                <th scope="col"> 由 {{ route_inbound[0]["bus_stop_name_tc"] }} 住
+                  {{route_inbound[(route_inbound|length)-1]["bus_stop_name_tc"]}}</th>
+              </tr>
+              {% else %}
+              <tr>
+                <th></th>
+              </tr>
+              {% endif %}
+
+            </thead>
+            <tbody>
+              {% if route_inbound|length != 0 %}
+              {% for i in range (0,route_inbound|length): %}
+              <tr>
+                <th scope="row"><a class="btn btn-sm btn-block" href="./inbound/{{i+1}}/" role="button">{{route_inbound[i]["bus_stop_name_tc"]}}</a></th>
+              </tr>
+              {% endfor %}
+              {% else %}
+              <tr>
+                <th></th>
+              </tr>
+              {% endif %}
+            </tbody>
+          </table>
+        </th>
+
+        <th valign="top">
+          <table id="all_route_table"
+            class="table table-striped table-hover table-bordered results">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col"> 由 {{route_outbound[0]["bus_stop_name_tc"] }} 住
+                  {{route_outbound[(route_outbound|length)-1]["bus_stop_name_tc"]}}</th>
+              </tr>
+            </thead>
+            <tbody id="myTable">
+              {% for i in range (0,route_outbound|length): %}
+              <tr>
+                <th scope="row"><a class="btn btn-sm btn-block" href="./outbound/{{i+1}}/" role="button">{{route_outbound[i]["bus_stop_name_tc"]}}</a></th>
+
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </th>
+      </tr>
+    </table>
+    </th>
+  </div>
+
+  <script>
+    $(document).ready(function () {
+      $("#myInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+  </script>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

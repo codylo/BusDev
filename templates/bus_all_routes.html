@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <title>城巴．新巴．巴士路線</title>
+</head>
+
+<style>
+  #myInput {
+    background-image: url('/css/searchicon.png');
+    /* Add a search icon to input */
+    background-position: 10px 12px;
+    /* Position the search icon */
+    background-repeat: no-repeat;
+    /* Do not repeat the icon image */
+    width: 100%;
+    /* Full-width */
+    font-size: 16px;
+    /* Increase font-size */
+    padding: 12px 20px 12px 40px;
+    /* Add some padding */
+    border: 1px solid #ddd;
+    /* Add a grey border */
+    margin-bottom: 12px;
+    /* Add some space below the input */
+  }
+
+  .results tr[visible="false"],
+  .no-result {
+    display: none;
+  }
+
+  .results tr[visible="true"] {
+    display: table-row;
+  }
+
+  .counter {
+    padding: 8px;
+    color: #ccc;
+  }
+</style>
+<!-- <script>
+  $(document).ready(function () {
+    $(".search").keyup(function () {
+      var searchTerm = $(".search").val();
+      var listItem = $('.results tbody').children('tr');
+      var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+
+      $.extend($.expr[':'], {
+        'containsi': function (elem, i, match, array) {
+          return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+        }
+      });
+
+      $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function (e) {
+        $(this).attr('visible', 'false');
+      });
+
+      $(".results tbody tr:containsi('" + searchSplit + "')").each(function (e) {
+        $(this).attr('visible', 'true');
+      });
+
+      var jobCount = $('.results tbody tr[visible="true"]').length;
+      $('.counter').text(jobCount + ' item');
+
+      if (jobCount == '0') { $('.no-result').show(); }
+      else { $('.no-result').hide(); }
+    });
+  });
+</script> -->
+
+<body>
+  <nav class="navbar navbar-expand navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">城巴．新巴．巴士路線</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="../">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <!-- <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Dropdown
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="#">Action</a>
+            <a class="dropdown-item" href="#">Another action</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#">Something else here</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li> -->
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" id="myInput" type="search" placeholder="Search" aria-label="Search">
+        <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button> -->
+      </form>
+    </div>
+  </nav>
+
+  <table id="all_route_table" class="table table-sm table-striped table-hover table-bordered results">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">路線</th>
+        <th scope="col">起點</th>
+        <th scope="col">目的地</th>
+        <th scope="col">營運公司</th>
+      </tr>
+    </thead>
+    <tbody id="myTable">
+      {% for route in all_company_routes["ctb"]: %}
+      <tr>
+        <th scope="row">
+          <a class="btn btn-primary btn-sm btn-block" href="./{{route['co']}}/{{route['route']}}/"
+            role="button">{{route["route"]}}</a>
+        </th>
+        <td>{{route["orig_tc"]}}</td>
+        <td>{{route["dest_tc"]}}</td>
+        <td>{{route["co"]}}</td>
+      </tr>
+      {% endfor %}
+      {% for route in all_company_routes["nwfb"]: %}
+      <tr>
+        <th scope="row"><button type="button" class="btn btn-primary btn-sm btn-block"><a class="text-white"
+              href="./{{route['co']}}/{{route['route']}}/">{{route["route"]}}</a></button> </th>
+        <td>{{route["orig_tc"]}}</td>
+        <td>{{route["dest_tc"]}}</td>
+        <td>{{route["co"]}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
+
+
+  <script>
+    $(document).ready(function () {
+      $("#myInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function () {
+          $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+      });
+    });
+  </script>
+
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>
