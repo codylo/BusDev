@@ -12,8 +12,8 @@ from datetime import *
 BASE_URL = "rt.data.gov.hk"
 BASE_URL_KMB = "data.etabus.gov.hk"
 
-folder_prefix = "bus_data"
-# folder_prefix = "/home/bus_data"
+# folder_prefix = "bus_data"
+folder_prefix = "/home/bus_data"
 
 
 
