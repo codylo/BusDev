@@ -13,12 +13,13 @@ def route_inout(company, route):
     bus_route_inbound = bus_main.bus_main(company, route, "inbound")
     bus_route_outbound = bus_main.bus_main(company, route, "outbound")
     return render_template("bus_route_inout.html", company_tc=bus_route_outbound.company_tc, route=bus_route_outbound.route, route_inbound=bus_route_inbound.get_bus_stop(), route_outbound=bus_route_outbound.get_bus_stop())
+    # return render_template("bus_route_inout.html", route=bus_route_outbound.route, route_inbound=bus_route_inbound.get_bus_stop(), route_outbound=bus_route_outbound.get_bus_stop())
 
 @app.route('/<company>/<route>/<direction>/<stop_code>/')
 def eta(company, route, direction, stop_code):
     bus_route = bus_main.bus_main(company, route, direction)
     stop_code = int(stop_code)
-    return render_template("bus_eta.html", stop_code=stop_code, eta_data=bus_route.get_eta(stop_code))
+    return render_template("bus_eta.html", company_tc=bus_route.company_tc, stop_code=stop_code, eta_data=bus_route.get_eta(stop_code))
 
 # app.run(debug=True)
 
